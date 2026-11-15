@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "Blip",
+    "slug": "blip",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#d9d6d0",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#d9d6d0"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.blip.mobile",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Blip ползва местоположението ти, за да пусне пин там, където си.",
+        "NSCameraUsageDescription": "Blip ползва камерата само когато снимаш за пин."
+      }
+    },
+    "android": {
+      "package": "app.blip.mobile",
+      "usesCleartextTraffic": true,
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "CAMERA"],
+      "adaptiveIcon": {
+        "backgroundColor": "#d9d6d0",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Blip ползва местоположението ти, за да пусне пин там, където си."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Blip ползва снимка само когато избереш да я закачиш към пин.",
+        "cameraPermission": "Blip ползва камерата само когато снимаш за пин."
+        }
+      ]
+    ]
+  }
+}
