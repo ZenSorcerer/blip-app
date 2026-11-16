@@ -55,6 +55,39 @@ const CATEGORIES = [
   { id: 'other', label: 'Друго' },
 ];
 
+const CITIES = [
+  { name: 'София', find: 'sofia sofiq', latitude: 42.6977, longitude: 23.3219 },
+  { name: 'Пловдив', find: 'plovdiv', latitude: 42.1354, longitude: 24.7453 },
+  { name: 'Варна', find: 'varna', latitude: 43.2141, longitude: 27.9147 },
+  { name: 'Бургас', find: 'burgas', latitude: 42.5048, longitude: 27.4626 },
+  { name: 'Стара Загора', find: 'stara zagora', latitude: 42.4258, longitude: 25.6345 },
+  { name: 'Русе', find: 'ruse', latitude: 43.8356, longitude: 25.9657 },
+  { name: 'Плевен', latitude: 43.417, longitude: 24.6067 },
+  { name: 'Сливен', latitude: 42.6816, longitude: 26.3292 },
+  { name: 'Добрич', latitude: 43.5726, longitude: 27.8273 },
+  { name: 'Шумен', latitude: 43.2712, longitude: 26.9361 },
+  { name: 'Перник', latitude: 42.6052, longitude: 23.0378 },
+  { name: 'Хасково', latitude: 41.9344, longitude: 25.5554 },
+  { name: 'Ямбол', latitude: 42.4842, longitude: 26.5035 },
+  { name: 'Пазарджик', latitude: 42.1928, longitude: 24.3336 },
+  { name: 'Благоевград', latitude: 42.0119, longitude: 23.09 },
+  { name: 'Велико Търново', latitude: 43.0757, longitude: 25.6172 },
+  { name: 'Враца', latitude: 43.2102, longitude: 23.5529 },
+  { name: 'Габрово', latitude: 42.8742, longitude: 25.3187 },
+  { name: 'Видин', latitude: 43.9916, longitude: 22.8824 },
+  { name: 'Монтана', latitude: 43.4125, longitude: 23.225 },
+  { name: 'Ловеч', latitude: 43.137, longitude: 24.7142 },
+  { name: 'Кърджали', latitude: 41.6338, longitude: 25.3777 },
+  { name: 'Кюстендил', latitude: 42.2839, longitude: 22.6911 },
+  { name: 'Разград', latitude: 43.5332, longitude: 26.5242 },
+  { name: 'Силистра', latitude: 44.1147, longitude: 27.2672 },
+  { name: 'Търговище', latitude: 43.2494, longitude: 26.5727 },
+  { name: 'Смолян', latitude: 41.5774, longitude: 24.7129 },
+  { name: 'Казанлък', latitude: 42.6194, longitude: 25.393 },
+];
+
+const FEATURED_CITIES = ['София', 'Пловдив', 'Варна', 'Бургас', 'Стара Загора'];
+
 function categoryLabel(id) {
   return CATEGORIES.find((item) => item.id === id)?.label || '';
 }
@@ -107,6 +140,8 @@ export default function MapScreen() {
   const [sendingReply, setSendingReply] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [listOpen, setListOpen] = useState(false);
+  const [citiesOpen, setCitiesOpen] = useState(false);
+  const [cityQuery, setCityQuery] = useState('');
   const [radiusKm, setRadiusKm] = useState(5);
   const [nearby, setNearby] = useState([]);
   const [nearbyLoading, setNearbyLoading] = useState(false);
@@ -241,7 +276,7 @@ export default function MapScreen() {
     if (permission.status !== 'granted') {
       Alert.alert(
         'Местоположението е изключено',
-        'Blip има нужда от местоположението ти, за да пусне пин там, където стоиш.',
+        'Kostaa има нужда от местоположението ти, за да пусне пин там, където стоиш.',
         [
           { text: 'Не сега', style: 'cancel' },
           { text: 'Отвори настройките', onPress: () => Linking.openSettings() },
@@ -370,7 +405,7 @@ export default function MapScreen() {
       setSelected(null);
       setComposer({ latitude: next.latitude, longitude: next.longitude });
     } catch {
-      Alert.alert('Местоположението липсва', 'Blip не успя да прочете къде стоиш.');
+      Alert.alert('Местоположението липсва', 'Kostaa не успя да прочете къде стоиш.');
     } finally {
       setFinding(false);
     }
@@ -383,7 +418,7 @@ export default function MapScreen() {
         moveTo(next);
       }
     } catch {
-      Alert.alert('Местоположението липсва', 'Blip не успя да прочете къде стоиш.');
+      Alert.alert('Местоположението липсва', 'Kostaa не успя да прочете къде стоиш.');
     }
   }
 
@@ -407,7 +442,7 @@ export default function MapScreen() {
       try {
         setImage(await shrinkPhoto(result.assets[0]));
       } catch {
-        Alert.alert('Снимката не е готова', 'Blip не успя да подготви тази снимка. Опитай с друга.');
+        Alert.alert('Снимката не е готова', 'Kostaa не успя да подготви тази снимка. Опитай с друга.');
       }
     }
   }
@@ -657,6 +692,20 @@ export default function MapScreen() {
     }
   }
 
+  function goToCity(city) {
+    userMoved.current = true;
+    const next = {
+      latitude: city.latitude,
+      longitude: city.longitude,
+      latitudeDelta: 0.08,
+      longitudeDelta: 0.08,
+    };
+    regionRef.current = next;
+    setRegion(next);
+    mapRef.current?.animateToRegion(next, 600);
+    load(next);
+  }
+
   async function removePin(pin) {
     try {
       const device = deviceRef.current || await deviceId();
@@ -708,10 +757,31 @@ export default function MapScreen() {
       </MapView>
 
       <Text style={[styles.credit, { top: insets.top + 10 }]}>Карта: Esri</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={[styles.cityRow, { top: insets.top + 40 }]}
+        contentContainerStyle={styles.cityRowContent}
+      >
+        {FEATURED_CITIES.map((name) => CITIES.find((city) => city.name === name)).map((city) => (
+          <Pressable key={city.name} style={styles.cityPill} onPress={() => goToCity(city)}>
+            <Text style={styles.cityPillText}>{city.name}</Text>
+          </Pressable>
+        ))}
+        <Pressable
+          style={[styles.cityPill, styles.cityMore]}
+          onPress={() => {
+            setCityQuery('');
+            setCitiesOpen(true);
+          }}
+        >
+          <Text style={styles.cityMoreText}>Още</Text>
+        </Pressable>
+      </ScrollView>
 
       {notice ? (
         <Pressable
-          style={[styles.notice, { top: insets.top + 36 }]}
+          style={[styles.notice, { top: insets.top + 92 }]}
           onPress={() => {
             focusPin(notice.pin);
             setNotice(null);
@@ -723,11 +793,11 @@ export default function MapScreen() {
       ) : null}
 
       {error ? (
-        <Pressable style={[styles.banner, { top: insets.top + (notice ? 118 : 36) }]} onPress={() => load(regionRef.current)}>
+        <Pressable style={[styles.banner, { top: insets.top + (notice ? 174 : 92) }]} onPress={() => load(regionRef.current)}>
           <Text style={styles.bannerText}>{error} Натисни, за да опиташ пак.</Text>
         </Pressable>
       ) : pins.length === 0 && !notice ? (
-        <View style={[styles.hint, { top: insets.top + 36 }]} pointerEvents="none">
+        <View style={[styles.hint, { top: insets.top + 92 }]} pointerEvents="none">
           <Text style={styles.hintText}>Още няма нищо наблизо. „Пин тук“ пуска бележка на това място.</Text>
         </View>
       ) : null}
@@ -759,6 +829,48 @@ export default function MapScreen() {
       >
         {finding ? <ActivityIndicator color="#f6f4ef" /> : <Text style={styles.pinButtonText}>Пин тук</Text>}
       </Pressable>
+
+      <Modal visible={citiesOpen} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => setCitiesOpen(false)}>
+        <View style={[styles.listScreen, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 12 }]}>
+          <View style={styles.listHeader}>
+            <Text style={styles.sheetTitle}>Градове</Text>
+            <Pressable onPress={() => setCitiesOpen(false)} hitSlop={8}>
+              <Text style={styles.photoButtonText}>Затвори</Text>
+            </Pressable>
+          </View>
+          <TextInput
+            value={cityQuery}
+            onChangeText={setCityQuery}
+            placeholder="Търси град"
+            placeholderTextColor="#8a847a"
+            autoCorrect={false}
+            style={styles.citySearch}
+          />
+          <FlatList
+            data={CITIES.filter((city) => {
+              const needle = cityQuery.trim().toLowerCase();
+              if (!needle) {
+                return true;
+              }
+              return city.name.toLowerCase().includes(needle) || (city.find || '').includes(needle);
+            })}
+            keyExtractor={(item) => item.name}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={<Text style={styles.optional}>Няма такъв град.</Text>}
+            renderItem={({ item }) => (
+              <Pressable
+                style={styles.cityChoice}
+                onPress={() => {
+                  setCitiesOpen(false);
+                  goToCity(item);
+                }}
+              >
+                <Text style={styles.cityChoiceText}>{item.name}</Text>
+              </Pressable>
+            )}
+          />
+        </View>
+      </Modal>
 
       <Modal visible={listOpen} animationType="slide" presentationStyle="fullScreen" onRequestClose={() => setListOpen(false)}>
         <View style={[styles.listScreen, { paddingTop: insets.top + 12, paddingBottom: insets.bottom + 12 }]}>
@@ -1018,6 +1130,32 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   hintText: { color: '#1c1b19', textAlign: 'center' },
+  cityRow: { position: 'absolute', left: 0, right: 0 },
+  cityRowContent: { paddingHorizontal: 16, gap: 8 },
+  cityPill: {
+    backgroundColor: 'rgba(246,244,239,0.94)',
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  cityPillText: { color: '#1c1b19', fontWeight: '700' },
+  cityMore: { backgroundColor: '#1c1b19' },
+  cityMoreText: { color: '#f6f4ef', fontWeight: '700' },
+  citySearch: {
+    marginTop: 16,
+    borderRadius: 14,
+    backgroundColor: '#fff',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: '#1c1b19',
+  },
+  cityChoice: {
+    paddingVertical: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#d9d6d0',
+  },
+  cityChoiceText: { color: '#1c1b19', fontSize: 18, fontWeight: '700' },
   locate: {
     position: 'absolute',
     left: 16,

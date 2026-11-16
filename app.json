@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Blip",
+    "name": "Kostaa",
     "slug": "blip",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,8 +16,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "app.blip.mobile",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Blip ползва местоположението ти, за да пусне пин там, където си.",
-        "NSCameraUsageDescription": "Blip ползва камерата само когато снимаш за пин."
+        "NSLocationWhenInUseUsageDescription": "Kostaa ползва местоположението ти, за да пусне пин там, където си.",
+        "NSCameraUsageDescription": "Kostaa ползва камерата само когато снимаш за пин."
       }
     },
     "android": {
@@ -38,14 +38,14 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Blip ползва местоположението ти, за да пусне пин там, където си."
+          "locationWhenInUsePermission": "Kostaa ползва местоположението ти, за да пусне пин там, където си."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Blip ползва снимка само когато избереш да я закачиш към пин.",
-        "cameraPermission": "Blip ползва камерата само когато снимаш за пин."
+          "photosPermission": "Kostaa ползва снимка само когато избереш да я закачиш към пин.",
+        "cameraPermission": "Kostaa ползва камерата само когато снимаш за пин."
         }
       ]
     ]
