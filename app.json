@@ -23,7 +23,11 @@
     "android": {
       "package": "app.blip.mobile",
       "usesCleartextTraffic": true,
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "CAMERA"],
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#d9d6d0",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -45,9 +49,10 @@
         "expo-image-picker",
         {
           "photosPermission": "Kostaa ползва снимка само когато избереш да я закачиш към пин.",
-        "cameraPermission": "Kostaa ползва камерата само когато снимаш за пин."
+          "cameraPermission": "Kostaa ползва камерата само когато снимаш за пин."
         }
-      ]
+      ],
+      "expo-status-bar"
     ]
   }
 }
