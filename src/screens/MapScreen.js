@@ -22,6 +22,7 @@ import * as Clipboard from 'expo-clipboard';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import BootScreen from '../components/BootScreen';
 import CountMarker from '../components/CountMarker';
 import PinMarker from '../components/PinMarker';
 import { groupPins, zoomRegion } from '../cluster';
@@ -718,11 +719,7 @@ export default function MapScreen() {
   }
 
   if (!bootRegion) {
-    return (
-      <View style={styles.fill}>
-        <ActivityIndicator color="#1c1b19" style={{ marginTop: insets.top + 28 }} />
-      </View>
-    );
+    return <BootScreen />;
   }
 
   return (
